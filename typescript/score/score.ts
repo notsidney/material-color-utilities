@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {CAM16} from 'hct/cam16';
-import * as utils from 'utils/color_utils';
-import * as math from 'utils/math_utils';
+import { CAM16 } from "../hct/cam16";
+import * as utils from "../utils/color_utils";
+import * as math from "../utils/math_utils";
 
 /**
  *  Given a large set of colors, remove colors that are unsuitable for a UI
@@ -56,7 +56,6 @@ export class Score {
       populationSum += population;
     }
 
-
     // Turn the count of each color into a proportion by dividing by the total
     // count. Also, fill a cache of CAM16 colors representing each color, and
     // record the proportion of colors for each CAM16 hue.
@@ -81,7 +80,7 @@ export class Score {
       const hue = Math.round(cam.hue);
 
       let excitedProportion = 0;
-      for (let i = (hue - 15); i < (hue + 15); i++) {
+      for (let i = hue - 15; i < hue + 15; i++) {
         const neighborHue = math.sanitizeDegrees(i);
         excitedProportion += hueProportions[neighborHue];
       }
@@ -94,9 +93,10 @@ export class Score {
       const proportion = colorsToExcitedProportion.get(color)!;
       const proportionScore = proportion * 100.0 * Score.WEIGHT_PROPORTION;
 
-      const chromaWeight = cam.chroma < Score.TARGET_CHROMA ?
-          Score.WEIGHT_CHROMA_BELOW :
-          Score.WEIGHT_CHROMA_ABOVE;
+      const chromaWeight =
+        cam.chroma < Score.TARGET_CHROMA
+          ? Score.WEIGHT_CHROMA_BELOW
+          : Score.WEIGHT_CHROMA_ABOVE;
       const chromaScore = (cam.chroma - Score.TARGET_CHROMA) * chromaWeight;
 
       const score = proportionScore + chromaScore;
@@ -110,7 +110,7 @@ export class Score {
     for (const color of filteredColors) {
       let duplicateHue = false;
       const hue = colorsToCam.get(color)!.hue;
-      for (const [alreadyChosenColor, ] of dedupedColorsToScore) {
+      for (const [alreadyChosenColor] of dedupedColorsToScore) {
         const alreadyChosenHue = colorsToCam.get(alreadyChosenColor)!.hue;
         if (math.differenceDegrees(hue, alreadyChosenHue) < 15) {
           duplicateHue = true;
@@ -136,20 +136,23 @@ export class Score {
 
     // Ensure that at least one color is returned.
     if (answer.length === 0) {
-      answer.push(0xff4285F4);  // Google Blue
+      answer.push(0xff4285f4); // Google Blue
     }
     return answer;
   }
 
   private static filter(
-      colorsToExcitedProportion: Map<number, number>,
-      colorsToCam: Map<number, CAM16>): number[] {
+    colorsToExcitedProportion: Map<number, number>,
+    colorsToCam: Map<number, CAM16>
+  ): number[] {
     const filtered = new Array<number>();
     for (const [color, cam] of colorsToCam.entries()) {
       const proportion = colorsToExcitedProportion.get(color)!;
-      if (cam.chroma >= Score.CUTOFF_CHROMA &&
-          utils.lstarFromInt(color) >= Score.CUTOFF_TONE &&
-          proportion >= Score.CUTOFF_EXCITED_PROPORTION) {
+      if (
+        cam.chroma >= Score.CUTOFF_CHROMA &&
+        utils.lstarFromInt(color) >= Score.CUTOFF_TONE &&
+        proportion >= Score.CUTOFF_EXCITED_PROPORTION
+      ) {
         filtered.push(color);
       }
     }

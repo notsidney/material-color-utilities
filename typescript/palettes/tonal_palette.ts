@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {HCT} from 'hct/hct';
+import { HCT } from "../hct/hct";
 
 /**
  *  A convenience class for retrieving colors that are constant in hue and
@@ -42,7 +42,9 @@ export class TonalPalette {
   }
 
   private constructor(
-      private readonly hue: number, private readonly chroma: number) {}
+    private readonly hue: number,
+    private readonly chroma: number
+  ) {}
 
   /**
    * @param tone HCT tone, measured from 0 to 100.

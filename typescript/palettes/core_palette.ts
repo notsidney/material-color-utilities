@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {HCT} from 'hct/hct';
+import { HCT } from "../hct/hct";
 
-import {TonalPalette} from './tonal_palette';
+import { TonalPalette } from "./tonal_palette";
 
 /**
  * An intermediate concept between the key color for a UI theme, and a full

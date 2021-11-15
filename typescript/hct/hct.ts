@@ -30,12 +30,11 @@
  * and a difference of 50 guarantees a contrast ratio >= 4.5.
  */
 
-import * as utils from 'utils/color_utils';
-import * as math from 'utils/math_utils';
+import * as utils from "../utils/color_utils";
+import * as math from "../utils/math_utils";
 
-import {CAM16} from './cam16';
-import {ViewingConditions} from './viewing_conditions';
-
+import { CAM16 } from "./cam16";
+import { ViewingConditions } from "./viewing_conditions";
 
 /**
  * HCT, hue, chroma, and tone. A color system that provides a perceptually
@@ -83,8 +82,13 @@ export class HCT {
    * hue and tone.
    */
   set hue(newHue: number) {
-    this.setInternalState(getInt(
-        math.sanitizeDegrees(newHue), this.internalChroma, this.internalTone));
+    this.setInternalState(
+      getInt(
+        math.sanitizeDegrees(newHue),
+        this.internalChroma,
+        this.internalTone
+      )
+    );
   }
 
   get chroma(): number {
@@ -98,7 +102,8 @@ export class HCT {
    */
   set chroma(newChroma: number) {
     this.setInternalState(
-        getInt(this.internalHue, newChroma, this.internalTone));
+      getInt(this.internalHue, newChroma, this.internalTone)
+    );
   }
 
   /** Lightness. Ranges from 0 to 100. */
@@ -113,12 +118,15 @@ export class HCT {
    */
   set tone(newTone: number) {
     this.setInternalState(
-        getInt(this.internalHue, this.internalChroma, newTone));
+      getInt(this.internalHue, this.internalChroma, newTone)
+    );
   }
 
   private constructor(
-      private internalHue: number, private internalChroma: number,
-      private internalTone: number) {
+    private internalHue: number,
+    private internalChroma: number,
+    private internalTone: number
+  ) {
     this.setInternalState(this.toInt());
   }
 
@@ -130,7 +138,6 @@ export class HCT {
     this.internalTone = tone;
   }
 }
-
 
 /**
  * When the delta between the floor & ceiling of a binary search for maximum
@@ -165,8 +172,11 @@ const LIGHTNESS_SEARCH_ENDPOINT: number = 0.01;
  */
 function getInt(hue: number, chroma: number, tone: number): number {
   return getIntInViewingConditions(
-      math.sanitizeDegrees(hue), chroma, math.clamp(0.0, 100.0, tone),
-      ViewingConditions.DEFAULT);
+    math.sanitizeDegrees(hue),
+    chroma,
+    math.clamp(0.0, 100.0, tone),
+    ViewingConditions.DEFAULT
+  );
 }
 
 /**
@@ -177,8 +187,11 @@ function getInt(hue: number, chroma: number, tone: number): number {
  *     was observed.
  */
 function getIntInViewingConditions(
-    hue: number, chroma: number, tone: number,
-    viewingConditions: ViewingConditions): number {
+  hue: number,
+  chroma: number,
+  tone: number,
+  viewingConditions: ViewingConditions
+): number {
   if (chroma < 1.0 || Math.round(tone) <= 0.0 || Math.round(tone) >= 100.0) {
     return utils.intFromLstar(tone);
   }
@@ -228,7 +241,7 @@ function getIntInViewingConditions(
  * @return CAM16 instance within error tolerance of the provided dimensions,
  *     or null.
  */
-function findCamByJ(hue: number, chroma: number, tone: number): CAM16|null {
+function findCamByJ(hue: number, chroma: number, tone: number): CAM16 | null {
   let low = 0.0;
   let high = 100.0;
   let mid = 0.0;
@@ -247,7 +260,8 @@ function findCamByJ(hue: number, chroma: number, tone: number): CAM16|null {
     if (dL < DL_MAX) {
       const camClipped = CAM16.fromInt(clipped);
       const dE = camClipped.distance(
-          CAM16.fromJch(camClipped.j, camClipped.chroma, hue));
+        CAM16.fromJch(camClipped.j, camClipped.chroma, hue)
+      );
       if (dE <= DE_MAX && dE <= bestdE) {
         bestdL = dL;
         bestdE = dE;

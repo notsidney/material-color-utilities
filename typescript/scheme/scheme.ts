@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CorePalette} from 'palettes/core_palette';
+import { CorePalette } from "../palettes/core_palette";
 
 /**
  * Represents a Material color scheme, a mapping of color roles to colors.
@@ -186,35 +186,37 @@ export class Scheme {
       surfaceVariant: core.n2.tone(30),
       onSurfaceVariant: core.n2.tone(80),
       inverseSurface: core.n1.tone(90),
-      inverseOnSurface: core.n1.tone(20)
+      inverseOnSurface: core.n1.tone(20),
     });
   }
 
-  private constructor(private readonly props: {
-    primary: number,
-    primaryContainer: number,
-    onPrimary: number,
-    onPrimaryContainer: number,
-    secondary: number,
-    secondaryContainer: number,
-    onSecondary: number,
-    onSecondaryContainer: number,
-    tertiary: number,
-    tertiaryContainer: number,
-    onTertiary: number,
-    onTertiaryContainer: number,
-    error: number,
-    errorContainer: number,
-    onError: number,
-    onErrorContainer: number,
-    outline: number,
-    background: number,
-    onBackground: number,
-    surface: number,
-    onSurface: number,
-    surfaceVariant: number,
-    onSurfaceVariant: number,
-    inverseSurface: number,
-    inverseOnSurface: number
-  }) {}
+  private constructor(
+    private readonly props: {
+      primary: number;
+      primaryContainer: number;
+      onPrimary: number;
+      onPrimaryContainer: number;
+      secondary: number;
+      secondaryContainer: number;
+      onSecondary: number;
+      onSecondaryContainer: number;
+      tertiary: number;
+      tertiaryContainer: number;
+      onTertiary: number;
+      onTertiaryContainer: number;
+      error: number;
+      errorContainer: number;
+      onError: number;
+      onErrorContainer: number;
+      outline: number;
+      background: number;
+      onBackground: number;
+      surface: number;
+      onSurface: number;
+      surfaceVariant: number;
+      onSurfaceVariant: number;
+      inverseSurface: number;
+      inverseOnSurface: number;
+    }
+  ) {}
 }

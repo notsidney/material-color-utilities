@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as math from 'utils/math_utils';
+import * as math from "../utils/math_utils";
 
 /**
  * Utility methods for color science constants and color space
@@ -65,7 +65,7 @@ export const blueFromInt = (argb: number) => {
 export const lstarFromInt = (argb: number) => {
   const red = (argb & 0x00ff0000) >> 16;
   const green = (argb & 0x0000ff00) >> 8;
-  const blue = (argb & 0x000000ff);
+  const blue = argb & 0x000000ff;
   const redL = linearized(red / 255.0) * 100.0;
   const greenL = linearized(green / 255.0) * 100.0;
   const blueL = linearized(blue / 255.0) * 100.0;
@@ -97,11 +97,11 @@ export const hexFromInt = (argb: number) => {
   // Pad single-digit output values
   for (const [i, part] of outParts.entries()) {
     if (part.length === 1) {
-      outParts[i] = '0' + part;
+      outParts[i] = "0" + part;
     }
   }
 
-  return '#' + outParts.join('');
+  return "#" + outParts.join("");
 };
 
 /**
@@ -111,7 +111,7 @@ export const hexFromInt = (argb: number) => {
 export const xyzFromInt = (argb: number) => {
   const red = (argb & 0x00ff0000) >> 16;
   const green = (argb & 0x0000ff00) >> 8;
-  const blue = (argb & 0x000000ff);
+  const blue = argb & 0x000000ff;
   const redL = linearized(red / 255.0) * 100.0;
   const greenL = linearized(green / 255.0) * 100.0;
   const blueL = linearized(blue / 255.0) * 100.0;
@@ -128,9 +128,12 @@ export const xyzFromInt = (argb: number) => {
  */
 export const intFromRgb = (rgb: number[]) => {
   return (
-      ((255 << 24) | ((rgb[0] & 0x0ff) << 16) | ((rgb[1] & 0x0ff) << 8) |
-       (rgb[2] & 0x0ff)) >>>
-      0);
+    ((255 << 24) |
+      ((rgb[0] & 0x0ff) << 16) |
+      ((rgb[1] & 0x0ff) << 8) |
+      (rgb[2] & 0x0ff)) >>>
+    0
+  );
 };
 
 /**
@@ -143,7 +146,7 @@ export const labFromInt = (argb: number) => {
 
   const red = (argb & 0x00ff0000) >> 16;
   const green = (argb & 0x0000ff00) >> 8;
-  const blue = (argb & 0x000000ff);
+  const blue = argb & 0x000000ff;
   const redL = linearized(red / 255.0) * 100.0;
   const greenL = linearized(green / 255.0) * 100.0;
   const blueL = linearized(blue / 255.0) * 100.0;
@@ -238,12 +241,12 @@ export const intFromXyz = (xyz: number[]) => {
  * @return ARGB representation of color.
  */
 export const intFromHex = (hex: string) => {
-  hex = hex.replace('#', '');
+  hex = hex.replace("#", "");
   const isThree = hex.length === 3;
   const isSix = hex.length === 6;
   const isEight = hex.length === 8;
   if (!isThree && !isSix && !isEight) {
-    throw new Error('unexpected hex ' + hex);
+    throw new Error("unexpected hex " + hex);
   }
   let r = 0;
   let g = 0;
@@ -263,8 +266,8 @@ export const intFromHex = (hex: string) => {
   }
 
   return (
-      ((255 << 24) | ((r & 0x0ff) << 16) | ((g & 0x0ff) << 8) | (b & 0x0ff)) >>>
-      0);
+    ((255 << 24) | ((r & 0x0ff) << 16) | ((g & 0x0ff) << 8) | (b & 0x0ff)) >>> 0
+  );
 };
 
 function parseIntHex(value: string) {
@@ -287,8 +290,11 @@ export const intFromLstar = (lstar: number) => {
   const y = lExceedsEpsilonKappa ? fy * fy * fy : lstar / kappa;
   const x = cubeExceedEpsilon ? fx * fx * fx : (116 * fx - 16) / kappa;
   const z = cubeExceedEpsilon ? fz * fz * fz : (116 * fx - 16) / kappa;
-  const xyz =
-      [x * WHITE_POINT_D65[0], y * WHITE_POINT_D65[1], z * WHITE_POINT_D65[2]];
+  const xyz = [
+    x * WHITE_POINT_D65[0],
+    y * WHITE_POINT_D65[1],
+    z * WHITE_POINT_D65[2],
+  ];
   return intFromXyz(xyz);
 };
 

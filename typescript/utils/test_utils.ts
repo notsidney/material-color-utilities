@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import 'jasmine';
+import "jasmine";
 
-import {hexFromInt} from 'utils/color_utils';
+import { hexFromInt } from "../utils/color_utils";
 
 declare global {
   namespace jasmine {
@@ -40,15 +40,17 @@ declare global {
  */
 export const customMatchers: jasmine.CustomMatcherFactories = {
   matchesColor(
-      util: jasmine.MatchersUtil,
-      customEqualityTesters: readonly jasmine.CustomEqualityTester[]) {
+    util: jasmine.MatchersUtil,
+    customEqualityTesters: readonly jasmine.CustomEqualityTester[]
+  ) {
     return {
       compare(actual: number, expected: number) {
         const pass = util.equals(actual, expected);
         return {
           pass,
           message: `Expected color ${hexFromInt(actual)} to ${
-              pass ? 'NOT' : ''} match: ${hexFromInt(expected)}`,
+            pass ? "NOT" : ""
+          } match: ${hexFromInt(expected)}`,
         };
       },
     };

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import * as utils from 'utils/color_utils';
+import * as utils from "../utils/color_utils";
 
-import {QuantizerMap} from './quantizer_map';
+import { QuantizerMap } from "./quantizer_map";
 
 const INDEX_BITS = 5;
-const SIDE_LENGTH = 33;    // ((1 << INDEX_INDEX_BITS) + 1)
-const TOTAL_SIZE = 35937;  // SIDE_LENGTH * SIDE_LENGTH * SIDE_LENGTH
+const SIDE_LENGTH = 33; // ((1 << INDEX_INDEX_BITS) + 1)
+const TOTAL_SIZE = 35937; // SIDE_LENGTH * SIDE_LENGTH * SIDE_LENGTH
 
 const directions = {
-  RED: 'red',
-  GREEN: 'green',
-  BLUE: 'blue',
+  RED: "red",
+  GREEN: "green",
+  BLUE: "blue",
 };
 
 /**
@@ -38,9 +38,13 @@ const directions = {
  */
 export class QuantizerWu {
   constructor(
-      private weights: number[] = [], private momentsR: number[] = [],
-      private momentsG: number[] = [], private momentsB: number[] = [],
-      private moments: number[] = [], private cubes: Box[] = []) {}
+    private weights: number[] = [],
+    private momentsR: number[] = [],
+    private momentsG: number[] = [],
+    private momentsB: number[] = [],
+    private moments: number[] = [],
+    private cubes: Box[] = []
+  ) {}
 
   /**
    * @param pixels Colors in ARGB format.
@@ -57,11 +61,11 @@ export class QuantizerWu {
   }
 
   private constructHistogram(pixels: number[]) {
-    this.weights = Array.from<number>({length: TOTAL_SIZE}).fill(0);
-    this.momentsR = Array.from<number>({length: TOTAL_SIZE}).fill(0);
-    this.momentsG = Array.from<number>({length: TOTAL_SIZE}).fill(0);
-    this.momentsB = Array.from<number>({length: TOTAL_SIZE}).fill(0);
-    this.moments = Array.from<number>({length: TOTAL_SIZE}).fill(0);
+    this.weights = Array.from<number>({ length: TOTAL_SIZE }).fill(0);
+    this.momentsR = Array.from<number>({ length: TOTAL_SIZE }).fill(0);
+    this.momentsG = Array.from<number>({ length: TOTAL_SIZE }).fill(0);
+    this.momentsB = Array.from<number>({ length: TOTAL_SIZE }).fill(0);
+    this.moments = Array.from<number>({ length: TOTAL_SIZE }).fill(0);
 
     const countByColor = QuantizerMap.quantize(pixels);
 
@@ -86,11 +90,11 @@ export class QuantizerWu {
 
   private computeMoments() {
     for (let r = 1; r < SIDE_LENGTH; r++) {
-      const area = Array.from<number>({length: SIDE_LENGTH}).fill(0);
-      const areaR = Array.from<number>({length: SIDE_LENGTH}).fill(0);
-      const areaG = Array.from<number>({length: SIDE_LENGTH}).fill(0);
-      const areaB = Array.from<number>({length: SIDE_LENGTH}).fill(0);
-      const area2 = Array.from<number>({length: SIDE_LENGTH}).fill(0.0);
+      const area = Array.from<number>({ length: SIDE_LENGTH }).fill(0);
+      const areaR = Array.from<number>({ length: SIDE_LENGTH }).fill(0);
+      const areaG = Array.from<number>({ length: SIDE_LENGTH }).fill(0);
+      const areaB = Array.from<number>({ length: SIDE_LENGTH }).fill(0);
+      const area2 = Array.from<number>({ length: SIDE_LENGTH }).fill(0.0);
       for (let g = 1; g < SIDE_LENGTH; g++) {
         let line = 0;
         let lineR = 0;
@@ -123,9 +127,10 @@ export class QuantizerWu {
   }
 
   private createBoxes(maxColors: number): CreateBoxesResult {
-    this.cubes =
-        Array.from<number>({length: maxColors}).fill(0).map(() => new Box());
-    const volumeVariance = Array.from<number>({length: maxColors}).fill(0.0);
+    this.cubes = Array.from<number>({ length: maxColors })
+      .fill(0)
+      .map(() => new Box());
+    const volumeVariance = Array.from<number>({ length: maxColors }).fill(0.0);
     this.cubes[0].r0 = 0;
     this.cubes[0].g0 = 0;
     this.cubes[0].b0 = 0;
@@ -139,9 +144,9 @@ export class QuantizerWu {
     for (let i = 1; i < maxColors; i++) {
       if (this.cut(this.cubes[next], this.cubes[i])) {
         volumeVariance[next] =
-            this.cubes[next].vol > 1 ? this.variance(this.cubes[next]) : 0.0;
+          this.cubes[next].vol > 1 ? this.variance(this.cubes[next]) : 0.0;
         volumeVariance[i] =
-            this.cubes[i].vol > 1 ? this.variance(this.cubes[i]) : 0.0;
+          this.cubes[i].vol > 1 ? this.variance(this.cubes[i]) : 0.0;
       } else {
         volumeVariance[next] = 0.0;
         i--;
@@ -172,8 +177,8 @@ export class QuantizerWu {
         const r = Math.round(this.volume(cube, this.momentsR) / weight);
         const g = Math.round(this.volume(cube, this.momentsG) / weight);
         const b = Math.round(this.volume(cube, this.momentsB) / weight);
-        const color = (255 << 24) | ((r & 0x0ff) << 16) | ((g & 0x0ff) << 8) |
-            (b & 0x0ff);
+        const color =
+          (255 << 24) | ((r & 0x0ff) << 16) | ((g & 0x0ff) << 8) | (b & 0x0ff);
         colors.push(color);
       }
     }
@@ -184,14 +189,15 @@ export class QuantizerWu {
     const dr = this.volume(cube, this.momentsR);
     const dg = this.volume(cube, this.momentsG);
     const db = this.volume(cube, this.momentsB);
-    const xx = this.moments[this.getIndex(cube.r1, cube.g1, cube.b1)] -
-        this.moments[this.getIndex(cube.r1, cube.g1, cube.b0)] -
-        this.moments[this.getIndex(cube.r1, cube.g0, cube.b1)] +
-        this.moments[this.getIndex(cube.r1, cube.g0, cube.b0)] -
-        this.moments[this.getIndex(cube.r0, cube.g1, cube.b1)] +
-        this.moments[this.getIndex(cube.r0, cube.g1, cube.b0)] +
-        this.moments[this.getIndex(cube.r0, cube.g0, cube.b1)] -
-        this.moments[this.getIndex(cube.r0, cube.g0, cube.b0)];
+    const xx =
+      this.moments[this.getIndex(cube.r1, cube.g1, cube.b1)] -
+      this.moments[this.getIndex(cube.r1, cube.g1, cube.b0)] -
+      this.moments[this.getIndex(cube.r1, cube.g0, cube.b1)] +
+      this.moments[this.getIndex(cube.r1, cube.g0, cube.b0)] -
+      this.moments[this.getIndex(cube.r0, cube.g1, cube.b1)] +
+      this.moments[this.getIndex(cube.r0, cube.g1, cube.b0)] +
+      this.moments[this.getIndex(cube.r0, cube.g0, cube.b1)] -
+      this.moments[this.getIndex(cube.r0, cube.g0, cube.b0)];
     const hypotenuse = dr * dr + dg * dg + db * db;
     const volume = this.volume(cube, this.weights);
     return xx - hypotenuse / volume;
@@ -204,14 +210,35 @@ export class QuantizerWu {
     const wholeW = this.volume(one, this.weights);
 
     const maxRResult = this.maximize(
-        one, directions.RED, one.r0 + 1, one.r1, wholeR, wholeG, wholeB,
-        wholeW);
+      one,
+      directions.RED,
+      one.r0 + 1,
+      one.r1,
+      wholeR,
+      wholeG,
+      wholeB,
+      wholeW
+    );
     const maxGResult = this.maximize(
-        one, directions.GREEN, one.g0 + 1, one.g1, wholeR, wholeG, wholeB,
-        wholeW);
+      one,
+      directions.GREEN,
+      one.g0 + 1,
+      one.g1,
+      wholeR,
+      wholeG,
+      wholeB,
+      wholeW
+    );
     const maxBResult = this.maximize(
-        one, directions.BLUE, one.b0 + 1, one.b1, wholeR, wholeG, wholeB,
-        wholeW);
+      one,
+      directions.BLUE,
+      one.b0 + 1,
+      one.b1,
+      wholeR,
+      wholeG,
+      wholeB,
+      wholeW
+    );
 
     let direction;
     const maxR = maxRResult.maximum;
@@ -252,7 +279,7 @@ export class QuantizerWu {
         two.b0 = one.b1;
         break;
       default:
-        throw new Error('unexpected direction ' + direction);
+        throw new Error("unexpected direction " + direction);
     }
 
     one.vol = (one.r1 - one.r0) * (one.g1 - one.g0) * (one.b1 - one.b0);
@@ -261,8 +288,15 @@ export class QuantizerWu {
   }
 
   private maximize(
-      cube: Box, direction: string, first: number, last: number, wholeR: number,
-      wholeG: number, wholeB: number, wholeW: number) {
+    cube: Box,
+    direction: string,
+    first: number,
+    last: number,
+    wholeR: number,
+    wholeG: number,
+    wholeB: number,
+    wholeW: number
+  ) {
     const bottomR = this.bottom(cube, direction, this.momentsR);
     const bottomG = this.bottom(cube, direction, this.momentsG);
     const bottomB = this.bottom(cube, direction, this.momentsB);
@@ -310,70 +344,87 @@ export class QuantizerWu {
 
   private volume(cube: Box, moment: number[]) {
     return (
-        moment[this.getIndex(cube.r1, cube.g1, cube.b1)] -
-        moment[this.getIndex(cube.r1, cube.g1, cube.b0)] -
-        moment[this.getIndex(cube.r1, cube.g0, cube.b1)] +
-        moment[this.getIndex(cube.r1, cube.g0, cube.b0)] -
-        moment[this.getIndex(cube.r0, cube.g1, cube.b1)] +
-        moment[this.getIndex(cube.r0, cube.g1, cube.b0)] +
-        moment[this.getIndex(cube.r0, cube.g0, cube.b1)] -
-        moment[this.getIndex(cube.r0, cube.g0, cube.b0)]);
+      moment[this.getIndex(cube.r1, cube.g1, cube.b1)] -
+      moment[this.getIndex(cube.r1, cube.g1, cube.b0)] -
+      moment[this.getIndex(cube.r1, cube.g0, cube.b1)] +
+      moment[this.getIndex(cube.r1, cube.g0, cube.b0)] -
+      moment[this.getIndex(cube.r0, cube.g1, cube.b1)] +
+      moment[this.getIndex(cube.r0, cube.g1, cube.b0)] +
+      moment[this.getIndex(cube.r0, cube.g0, cube.b1)] -
+      moment[this.getIndex(cube.r0, cube.g0, cube.b0)]
+    );
   }
 
   private bottom(cube: Box, direction: string, moment: number[]) {
     switch (direction) {
       case directions.RED:
         return (
-            -moment[this.getIndex(cube.r0, cube.g1, cube.b1)] +
-            moment[this.getIndex(cube.r0, cube.g1, cube.b0)] +
-            moment[this.getIndex(cube.r0, cube.g0, cube.b1)] -
-            moment[this.getIndex(cube.r0, cube.g0, cube.b0)]);
+          -moment[this.getIndex(cube.r0, cube.g1, cube.b1)] +
+          moment[this.getIndex(cube.r0, cube.g1, cube.b0)] +
+          moment[this.getIndex(cube.r0, cube.g0, cube.b1)] -
+          moment[this.getIndex(cube.r0, cube.g0, cube.b0)]
+        );
       case directions.GREEN:
         return (
-            -moment[this.getIndex(cube.r1, cube.g0, cube.b1)] +
-            moment[this.getIndex(cube.r1, cube.g0, cube.b0)] +
-            moment[this.getIndex(cube.r0, cube.g0, cube.b1)] -
-            moment[this.getIndex(cube.r0, cube.g0, cube.b0)]);
+          -moment[this.getIndex(cube.r1, cube.g0, cube.b1)] +
+          moment[this.getIndex(cube.r1, cube.g0, cube.b0)] +
+          moment[this.getIndex(cube.r0, cube.g0, cube.b1)] -
+          moment[this.getIndex(cube.r0, cube.g0, cube.b0)]
+        );
       case directions.BLUE:
         return (
-            -moment[this.getIndex(cube.r1, cube.g1, cube.b0)] +
-            moment[this.getIndex(cube.r1, cube.g0, cube.b0)] +
-            moment[this.getIndex(cube.r0, cube.g1, cube.b0)] -
-            moment[this.getIndex(cube.r0, cube.g0, cube.b0)]);
+          -moment[this.getIndex(cube.r1, cube.g1, cube.b0)] +
+          moment[this.getIndex(cube.r1, cube.g0, cube.b0)] +
+          moment[this.getIndex(cube.r0, cube.g1, cube.b0)] -
+          moment[this.getIndex(cube.r0, cube.g0, cube.b0)]
+        );
       default:
-        throw new Error('unexpected direction $direction');
+        throw new Error("unexpected direction $direction");
     }
   }
 
   private top(
-      cube: Box, direction: string, position: number, moment: number[]) {
+    cube: Box,
+    direction: string,
+    position: number,
+    moment: number[]
+  ) {
     switch (direction) {
       case directions.RED:
         return (
-            moment[this.getIndex(position, cube.g1, cube.b1)] -
-            moment[this.getIndex(position, cube.g1, cube.b0)] -
-            moment[this.getIndex(position, cube.g0, cube.b1)] +
-            moment[this.getIndex(position, cube.g0, cube.b0)]);
+          moment[this.getIndex(position, cube.g1, cube.b1)] -
+          moment[this.getIndex(position, cube.g1, cube.b0)] -
+          moment[this.getIndex(position, cube.g0, cube.b1)] +
+          moment[this.getIndex(position, cube.g0, cube.b0)]
+        );
       case directions.GREEN:
         return (
-            moment[this.getIndex(cube.r1, position, cube.b1)] -
-            moment[this.getIndex(cube.r1, position, cube.b0)] -
-            moment[this.getIndex(cube.r0, position, cube.b1)] +
-            moment[this.getIndex(cube.r0, position, cube.b0)]);
+          moment[this.getIndex(cube.r1, position, cube.b1)] -
+          moment[this.getIndex(cube.r1, position, cube.b0)] -
+          moment[this.getIndex(cube.r0, position, cube.b1)] +
+          moment[this.getIndex(cube.r0, position, cube.b0)]
+        );
       case directions.BLUE:
         return (
-            moment[this.getIndex(cube.r1, cube.g1, position)] -
-            moment[this.getIndex(cube.r1, cube.g0, position)] -
-            moment[this.getIndex(cube.r0, cube.g1, position)] +
-            moment[this.getIndex(cube.r0, cube.g0, position)]);
+          moment[this.getIndex(cube.r1, cube.g1, position)] -
+          moment[this.getIndex(cube.r1, cube.g0, position)] -
+          moment[this.getIndex(cube.r0, cube.g1, position)] +
+          moment[this.getIndex(cube.r0, cube.g0, position)]
+        );
       default:
-        throw new Error('unexpected direction $direction');
+        throw new Error("unexpected direction $direction");
     }
   }
 
   private getIndex(r: number, g: number, b: number): number {
-    return (r << (INDEX_BITS * 2)) + (r << (INDEX_BITS + 1)) + r +
-        (g << INDEX_BITS) + g + b;
+    return (
+      (r << (INDEX_BITS * 2)) +
+      (r << (INDEX_BITS + 1)) +
+      r +
+      (g << INDEX_BITS) +
+      g +
+      b
+    );
   }
 }
 
@@ -383,9 +434,14 @@ export class QuantizerWu {
  */
 class Box {
   constructor(
-      public r0: number = 0, public r1: number = 0, public g0: number = 0,
-      public g1: number = 0, public b0: number = 0, public b1: number = 0,
-      public vol: number = 0) {}
+    public r0: number = 0,
+    public r1: number = 0,
+    public g0: number = 0,
+    public g1: number = 0,
+    public b0: number = 0,
+    public b1: number = 0,
+    public vol: number = 0
+  ) {}
 }
 
 /**

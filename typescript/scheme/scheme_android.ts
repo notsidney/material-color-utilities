@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CorePalette} from 'palettes/core_palette';
+import { CorePalette } from "../palettes/core_palette";
 
 /**
  * Represents an Android 12 color scheme, a mapping of color roles to colors.
@@ -190,31 +190,33 @@ export class SchemeAndroid {
     });
   }
 
-  private constructor(private readonly props: {
-    colorAccentPrimary: number,
-    colorAccentPrimaryVariant: number,
-    colorAccentSecondary: number,
-    colorAccentSecondaryVariant: number,
-    colorAccentTertiary: number,
-    colorAccentTertiaryVariant: number,
-    textColorPrimary: number,
-    textColorSecondary: number,
-    textColorTertiary: number,
-    textColorPrimaryInverse: number,
-    textColorSecondaryInverse: number,
-    textColorTertiaryInverse: number,
-    colorBackground: number,
-    colorBackgroundFloating: number,
-    colorSurface: number,
-    colorSurfaceVariant: number,
-    colorSurfaceHighlight: number,
-    surfaceHeader: number,
-    underSurface: number,
-    offState: number,
-    accentSurface: number,
-    textPrimaryOnAccent: number,
-    textSecondaryOnAccent: number,
-    volumeBackground: number,
-    scrim: number
-  }) {}
+  private constructor(
+    private readonly props: {
+      colorAccentPrimary: number;
+      colorAccentPrimaryVariant: number;
+      colorAccentSecondary: number;
+      colorAccentSecondaryVariant: number;
+      colorAccentTertiary: number;
+      colorAccentTertiaryVariant: number;
+      textColorPrimary: number;
+      textColorSecondary: number;
+      textColorTertiary: number;
+      textColorPrimaryInverse: number;
+      textColorSecondaryInverse: number;
+      textColorTertiaryInverse: number;
+      colorBackground: number;
+      colorBackgroundFloating: number;
+      colorSurface: number;
+      colorSurfaceVariant: number;
+      colorSurfaceHighlight: number;
+      surfaceHeader: number;
+      underSurface: number;
+      offState: number;
+      accentSurface: number;
+      textPrimaryOnAccent: number;
+      textSecondaryOnAccent: number;
+      volumeBackground: number;
+      scrim: number;
+    }
+  ) {}
 }

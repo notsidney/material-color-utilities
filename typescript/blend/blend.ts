@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {CAM16} from 'hct/cam16';
-import {HCT} from 'hct/hct';
-import * as mathUtils from 'utils/math_utils';
+import { CAM16 } from "../hct/cam16";
+import { HCT } from "../hct/hct";
+import * as mathUtils from "../utils/math_utils";
 
 /**
  * Functions for blending in HCT and CAM16.
@@ -37,12 +37,15 @@ export class Blend {
   static harmonize(designColor: number, sourceColor: number) {
     const fromHct = HCT.fromInt(designColor);
     const toHct = HCT.fromInt(sourceColor);
-    const differenceDegrees =
-        mathUtils.differenceDegrees(fromHct.hue, toHct.hue);
+    const differenceDegrees = mathUtils.differenceDegrees(
+      fromHct.hue,
+      toHct.hue
+    );
     const rotationDegrees = Math.min(differenceDegrees * 0.5, 15.0);
     const outputHue = mathUtils.sanitizeDegrees(
-        fromHct.hue +
-        rotationDegrees * Blend.rotationDirection(fromHct.hue, toHct.hue));
+      fromHct.hue +
+        rotationDegrees * Blend.rotationDirection(fromHct.hue, toHct.hue)
+    );
     return HCT.from(outputHue, fromHct.chroma, fromHct.tone).toInt();
   }
 
