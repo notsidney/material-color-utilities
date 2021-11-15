@@ -1,5 +1,9 @@
 # Material color utilities
 
+Forked to fix TypeScript imports for use in [Material You palette visualizer](https://github.com/notsidney/material-you-palette-visual)
+
+---
+
 Algorithms and utilities that power the Material Design 3 (M3) color system,
 including choosing theme colors from images and creating tones of colors; all in
 a new color space.
